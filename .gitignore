@@ -1,0 +1,8 @@
+# Ignore node_modules, build artifacts, IDE files, and environment files
+/frontend/node_modules/
+/frontend/build/
+/backend/target/
+*.iml
+.idea/
+*.env
+.DS_Store
