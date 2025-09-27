@@ -19,18 +19,92 @@ const Checkout = () => {
     cvv: ''
   });
 
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+
+  const validateField = (name, value) => {
+    switch (name) {
+      case 'firstName':
+      case 'lastName':
+        return value.length < 2 ? 'Must be at least 2 characters long' : '';
+      case 'email':
+        return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? 'Invalid email address' : '';
+      case 'phone':
+        return !/^\d{10}$/.test(value.replace(/\D/g, '')) ? 'Phone number must be 10 digits' : '';
+      case 'address':
+        return value.length < 5 ? 'Please enter a valid address' : '';
+      case 'city':
+      case 'state':
+        return value.length < 2 ? 'This field is required' : '';
+      case 'zipCode':
+        return !/^\d{5}$/.test(value) ? 'ZIP code must be 5 digits' : '';
+      case 'cardNumber':
+        return !/^\d{16}$/.test(value.replace(/\D/g, '')) ? 'Card number must be 16 digits' : '';
+      case 'cardName':
+        return value.length < 3 ? 'Please enter the full name on your card' : '';
+      case 'expiryDate':
+        if (!/^(0[1-9]|1[0-2])\/([0-9]{2})$/.test(value)) {
+          return 'Use MM/YY format';
+        }
+        const [month, year] = value.split('/');
+        const expiry = new Date(2000 + parseInt(year), parseInt(month) - 1);
+        const today = new Date();
+        return expiry < today ? 'Card has expired' : '';
+      case 'cvv':
+        return !/^\d{3,4}$/.test(value) ? 'CVV must be 3 or 4 digits' : '';
+      default:
+        return '';
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+    
+    if (touched[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: validateField(name, value)
+      }));
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    setTouched(prev => ({
+      ...prev,
+      [name]: true
+    }));
+    setErrors(prev => ({
+      ...prev,
+      [name]: validateField(name, value)
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    Object.keys(formData).forEach(key => {
+      const error = validateField(key, formData[key]);
+      if (error) {
+        newErrors[key] = error;
+      }
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', formData);
+    setTouched(Object.keys(formData).reduce((acc, key) => ({ ...acc, [key]: true }), {}));
+    
+    if (validateForm()) {
+      console.log('Form submitted:', formData);
+    } else {
+      console.log('Form has errors');
+    }
   };
 
   return (
@@ -51,8 +125,13 @@ const Checkout = () => {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={touched.firstName && errors.firstName ? 'error' : ''}
                   required
                 />
+                {touched.firstName && errors.firstName && (
+                  <span className="error-message">{errors.firstName}</span>
+                )}
               </div>
               <div className="form-group">
                 <label htmlFor="lastName">Last Name</label>
@@ -62,8 +141,13 @@ const Checkout = () => {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={touched.lastName && errors.lastName ? 'error' : ''}
                   required
                 />
+                {touched.lastName && errors.lastName && (
+                  <span className="error-message">{errors.lastName}</span>
+                )}
               </div>
             </div>
 
@@ -76,8 +160,13 @@ const Checkout = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={touched.email && errors.email ? 'error' : ''}
                   required
                 />
+                {touched.email && errors.email && (
+                  <span className="error-message">{errors.email}</span>
+                )}
               </div>
               <div className="form-group">
                 <label htmlFor="phone">Phone</label>
@@ -87,8 +176,14 @@ const Checkout = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={touched.phone && errors.phone ? 'error' : ''}
+                  placeholder="1234567890"
                   required
                 />
+                {touched.phone && errors.phone && (
+                  <span className="error-message">{errors.phone}</span>
+                )}
               </div>
             </div>
           </section>
@@ -104,8 +199,13 @@ const Checkout = () => {
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                className={touched.address && errors.address ? 'error' : ''}
                 required
               />
+              {touched.address && errors.address && (
+                <span className="error-message">{errors.address}</span>
+              )}
             </div>
 
             <div className="form-row">
@@ -117,8 +217,13 @@ const Checkout = () => {
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={touched.city && errors.city ? 'error' : ''}
                   required
                 />
+                {touched.city && errors.city && (
+                  <span className="error-message">{errors.city}</span>
+                )}
               </div>
               <div className="form-group">
                 <label htmlFor="state">State</label>
@@ -128,8 +233,13 @@ const Checkout = () => {
                   name="state"
                   value={formData.state}
                   onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={touched.state && errors.state ? 'error' : ''}
                   required
                 />
+                {touched.state && errors.state && (
+                  <span className="error-message">{errors.state}</span>
+                )}
               </div>
               <div className="form-group">
                 <label htmlFor="zipCode">ZIP Code</label>
@@ -139,10 +249,15 @@ const Checkout = () => {
                   name="zipCode"
                   value={formData.zipCode}
                   onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={touched.zipCode && errors.zipCode ? 'error' : ''}
+                  maxLength="5"
+                  placeholder="12345"
                   required
-                  pattern="[0-9]{5}"
-                  title="Five digit zip code"
                 />
+                {touched.zipCode && errors.zipCode && (
+                  <span className="error-message">{errors.zipCode}</span>
+                )}
               </div>
             </div>
           </section>
@@ -158,12 +273,15 @@ const Checkout = () => {
                 name="cardNumber"
                 value={formData.cardNumber}
                 onChange={handleChange}
-                required
+                onBlur={handleBlur}
+                className={touched.cardNumber && errors.cardNumber ? 'error' : ''}
                 maxLength="16"
-                pattern="[0-9]{16}"
-                title="16 digit card number"
-                placeholder="1234 5678 9012 3456"
+                placeholder="1234567890123456"
+                required
               />
+              {touched.cardNumber && errors.cardNumber && (
+                <span className="error-message">{errors.cardNumber}</span>
+              )}
             </div>
 
             <div className="form-row">
@@ -175,8 +293,13 @@ const Checkout = () => {
                   name="cardName"
                   value={formData.cardName}
                   onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={touched.cardName && errors.cardName ? 'error' : ''}
                   required
                 />
+                {touched.cardName && errors.cardName && (
+                  <span className="error-message">{errors.cardName}</span>
+                )}
               </div>
               <div className="form-group">
                 <label htmlFor="expiryDate">Expiry Date</label>
@@ -186,12 +309,15 @@ const Checkout = () => {
                   name="expiryDate"
                   value={formData.expiryDate}
                   onChange={handleChange}
-                  required
+                  onBlur={handleBlur}
+                  className={touched.expiryDate && errors.expiryDate ? 'error' : ''}
                   placeholder="MM/YY"
-                  pattern="(0[1-9]|1[0-2])\/([0-9]{2})"
-                  title="MM/YY format"
                   maxLength="5"
+                  required
                 />
+                {touched.expiryDate && errors.expiryDate && (
+                  <span className="error-message">{errors.expiryDate}</span>
+                )}
               </div>
               <div className="form-group">
                 <label htmlFor="cvv">CVV</label>
@@ -201,12 +327,15 @@ const Checkout = () => {
                   name="cvv"
                   value={formData.cvv}
                   onChange={handleChange}
-                  required
-                  pattern="[0-9]{3,4}"
-                  title="3 or 4 digit CVV"
+                  onBlur={handleBlur}
+                  className={touched.cvv && errors.cvv ? 'error' : ''}
                   maxLength="4"
                   placeholder="123"
+                  required
                 />
+                {touched.cvv && errors.cvv && (
+                  <span className="error-message">{errors.cvv}</span>
+                )}
               </div>
             </div>
           </section>
