@@ -13,8 +13,8 @@ This roadmap breaks down the project into clear, trackable steps. Check off each
 - [x] Set up basic routing (Home, Products, Cart, Checkout)
 - [x] Style navigation and pages with CSS
 - [x] Create product listing page with mock data
-- [ ] Implement cart functionality (add/remove items)
-- [ ] Build checkout form
+- [x] Implement cart functionality (add/remove items)
+- [x] Build checkout form
 - [ ] Connect to backend API
 - [ ] Add authentication (login/register)
 
