@@ -61,9 +61,14 @@ class ApiService {
     return this.fetchWithErrorHandling(`${API_BASE_URL}/products/category/${encodeURIComponent(category)}`);
   }
 
-  // Test endpoint
+  // Health check endpoint
   async testConnection() {
-    return this.fetchWithErrorHandling(`${API_BASE_URL}/test`);
+    return this.fetchWithErrorHandling(`${API_BASE_URL}/health`);
+  }
+
+  // Hello endpoint
+  async getHello() {
+    return this.fetchWithErrorHandling(`${API_BASE_URL}/hello`);
   }
 }
 

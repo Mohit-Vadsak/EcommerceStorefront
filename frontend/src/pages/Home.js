@@ -8,13 +8,9 @@ function Home() {
   useEffect(() => {
     const checkApiConnection = async () => {
       try {
-        // Test API connection
-        await apiService.testConnection();
-        
-        // Get product count
+        // Get products to test connection and count
         const products = await apiService.getAllProducts();
         setProductCount(products.length);
-        
         setApiStatus('connected');
       } catch (error) {
         console.error('API connection failed:', error);
@@ -45,9 +41,17 @@ function Home() {
         <h3>System Status</h3>
         <div style={getStatusStyle()}>
           {apiStatus === 'checking' && '🔄 Checking API connection...'}
-          {apiStatus === 'connected' && `✅ Backend API Connected | ${productCount} products available`}
-          {apiStatus === 'disconnected' && '❌ Backend API Disconnected'}
+          {apiStatus === 'connected' && `✅ Backend API Connected | ${productCount} products loaded from MongoDB`}
+          {apiStatus === 'disconnected' && '❌ Backend API Disconnected - Check if Spring Boot server is running on port 8080'}
         </div>
+        
+        {apiStatus === 'connected' && (
+          <div style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#666' }}>
+            <p>🔗 API Base URL: http://localhost:8080/api</p>
+            <p>📡 Products Endpoint: /products</p>
+            <p>🔍 Real-time data from MongoDB via Spring Boot</p>
+          </div>
+        )}
       </div>
 
       <div style={{ margin: '2rem 0' }}>
