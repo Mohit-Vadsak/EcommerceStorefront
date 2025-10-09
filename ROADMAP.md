@@ -21,9 +21,9 @@ This roadmap breaks down the project into clear, trackable steps. Check off each
 ## 3. Backend (Java Spring Boot) - NEXT
 
 - [x] Initialize Spring Boot project with Maven/Gradle
-- [ ] Set up project structure (controllers, services, models)
-- [ ] Set up MongoDB connection with Spring Data
-- [ ] Create Product model and repository
+- [X] Set up project structure (controllers, services, models)
+- [x] Set up MongoDB connection with Spring Data
+- [x] Create Product model and repository
 - [ ] Create product API endpoints (GET, POST, PUT, DELETE)
 - [ ] Create User model and endpoints
 - [ ] Create Order model and endpoints
